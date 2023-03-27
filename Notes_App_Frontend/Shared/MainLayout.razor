@@ -1,37 +1,119 @@
 ﻿@using MudBlazor
+@using Index = Notes_App_Frontend.Pages.Index
+@using System.Net.Http.Headers
+@using Notes_App_Frontend.Models
+@inject HttpClient HttpClient
 @inherits LayoutComponentBase
 
 
-<PageTitle>3D File Management System</PageTitle>
-<MudThemeProvider IsDarkMode="true" Theme="new MudTheme()"/>
+<PageTitle>Notes App</PageTitle>
+<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="customTheme"/>
 <MudDialogProvider />
 <MudSnackbarProvider />
-
+@if (isAuthenticated)
+    {
 <MudLayout>
-    <MudAppBar Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudSpacer />
-        <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Link="https://mudblazor.com/" Target="_blank" />
-        <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" Elevation="1">
-        <MudDrawerHeader>
-            <MudText Typo="Typo.h6">MudBlazor_Template</MudText>
-        </MudDrawerHeader>
-        <NavMenu />
-    </MudDrawer>
+    
+        <MudAppBar Elevation="0">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
+            <MudSpacer/>
+            <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Link="https://mudblazor.com/" Target="_blank"/>
+            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank"/>
+        </MudAppBar>
+        <MudDrawer @bind-Open="@openDrawer" Elevation="1">
+            <MudNavMenu Class="mud-width-full">
+                <MudText Typo="Typo.h6" Class="px-4">Material</MudText>
+                <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Icons</MudText>
+                <MudDivider Class="my-2"/>
+                <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
+                <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
+                <MudNavLink Href="/billing" Icon="@Icons.Material.Filled.Receipt" Disabled="true">Billing</MudNavLink>
+                <MudNavGroup Title="Settings" Icon="@Icons.Material.Filled.Settings" Expanded="true">
+                    <MudNavLink Href="/users" Icon="@Icons.Material.Filled.People" IconColor="Color.Success">Users</MudNavLink>
+                    <MudNavLink Href="/security" Icon="@Icons.Material.Filled.Security" IconColor="Color.Info">Security</MudNavLink>
+                </MudNavGroup>
+            </MudNavMenu>
+
+        </MudDrawer>
+   
     <MudMainContent>
         <MudContainer MaxWidth="MaxWidth.Large" Class="my-16 pt-16">
             @Body
         </MudContainer>
     </MudMainContent>
+
 </MudLayout>
-
+ }
+else
+{
+    <MudLayout>
+        <MudContainer Class="d-flex align-center flex-grow-1 gap-4" Elevation="0">
+            @Body
+        </MudContainer>
+    </MudLayout>
+    
+}
 @code {
-    bool _drawerOpen = true;
-
-    void DrawerToggle()
+    bool openDrawer;
+    private bool _isDarkMode;
+    private MudThemeProvider _mudThemeProvider;
+    
+    void ToggleDrawer()
     {
-        _drawerOpen = !_drawerOpen;
+        openDrawer = !openDrawer;
     }
+
+
+        //overridden by ThemeProvider
+    MudTheme customTheme = new MudTheme()
+    {
+        Palette = new Palette()
+        {
+            Primary = Colors.Blue.Default,
+            Secondary = Colors.Green.Accent4,
+            AppbarBackground = Colors.Red.Default,
+        },
+        PaletteDark = new PaletteDark()
+        {
+            Primary = Colors.Blue.Lighten1
+        },
+
+        LayoutProperties = new LayoutProperties()
+        {
+            DrawerWidthLeft = "260px",
+            DrawerWidthRight = "300px"
+        }
+    };
+    
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+
+            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
+
+
+            var requestModel = new AuthenticationRequestModel { email = "tes46t123", password = "pass" };
+    /* var ret = await HttpClient.PostAsJsonAsync("http://127.0.0.1:8080/api/v0/auth/authenticate",requestModel);
+            if ((int) ret.StatusCode==200)
+            {
+                var rre = await ret.Content.ReadFromJsonAsync<AuthenticationResponseModel>();
+                Console.WriteLine(rre.token);
+            }*/
+            string token = "BEARER eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXM0NnQxMjMiLCJpYXQiOjE2Nzk4NjM3ODYsImV4cCI6MTY3OTg2NTIyNn0.wPx99haE-Lqgsv3wfliRLtNik4zhFHERXvVYyIK5AsraW_Mof7C5d9vLBpcgYgloX_kin3vsdGQiP19QRPt_9Q";
+            HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXM0NnQxMjMiLCJpYXQiOjE2Nzk4NjU1MTksImV4cCI6MTY3OTg2Njk1OX0.-9AQZgnPAIevSYtDCcFttoHq4ovdEPzqfBugJpc_9XRVTzjMwIjx9rJYYop_V7cZmgwygpieyV4-wkKy3gm6Ag");
+            var resa = await HttpClient.GetAsync("http://localhost:8080/test/hello");
+            isAuthenticated = resa.IsSuccessStatusCode;
+            StateHasChanged();
+            var resaa = await resa.Content.ReadAsStringAsync();
+            Console.WriteLine(resaa);
+
+
+
+        }
+
+    }
+
+    public bool isAuthenticated { get; set; }
 }

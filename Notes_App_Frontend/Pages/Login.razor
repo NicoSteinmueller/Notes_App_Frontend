@@ -1,0 +1,107 @@
+
+@page "/"
+@using MudBlazor
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient
+@inject IAuthentication Authentication
+<PageTitle>Login</PageTitle>
+
+
+@using System.ComponentModel.DataAnnotations
+@using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using Notes_App_Frontend.Models
+@using Notes_App_Frontend.Service
+
+<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
+<DataAnnotationsValidator/>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Email" Class="mt-3"
+                              @bind-Value="model.Email" For="@(() => model.Email)"/>
+                <MudTextField Label="Password" HelperText="Input your Password" Class="mt-3"
+                              @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password"/>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" sm="5">
+        <MudPaper Class="pa-4 mud-height-full">
+            <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+            @if (success)
+            {
+                <MudText Color="Color.Success">Success</MudText>
+            }
+            else
+            {
+                <MudText Color="@Color.Error">
+                    <ValidationSummary />
+                </MudText>
+            }
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" Align="Align.Center">
+            Fill out the form correctly to see the success message.
+        </MudText>
+    </MudItem>
+</MudGrid>
+</EditForm>
+
+
+@code {
+    
+    [Inject] //für alle Tabs im Browser
+    private ProtectedLocalStorage BrowserSettings { get; set; }
+    
+    RegisterAccountForm model = new RegisterAccountForm();
+    bool success;
+    
+    
+    
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            
+            
+        }
+    }
+
+    public class RegisterAccountForm
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; }
+
+        [Required]
+        [StringLength(64, ErrorMessage = "The password must be at least 8 and a maximum of 64 characters long.", MinimumLength = 8)]
+        public string Password { get; set; }
+
+    }
+
+    private async void OnValidSubmit(EditContext context)
+    {
+
+        if (await Authentication.login(model.Email, model.Password))
+        {
+            success = true;
+            NavigationManager.NavigateTo("/Dashboard");
+        }
+        else
+        {
+            success = false;
+        }
+        
+        
+        
+        Console.WriteLine(model.Email);
+        StateHasChanged();
+    }
+
+}

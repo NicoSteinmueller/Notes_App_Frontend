@@ -1,9 +1,10 @@
-﻿@page "/"
+﻿@page "/sfddsf"
 @using System.Text.Json
 @using System.Net
 @using System.Net.Http.Headers
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using MudBlazor
+@layout MainLayout
 @inject HttpClient HttpClient;
 
 <PageTitle>Index</PageTitle>
@@ -13,3 +14,21 @@
 Welcome to your new app.
 
 <SurveyPrompt Title="How is Blazor working for you?"/>
+
+@code
+{
+   
+   
+    [Inject] //für alle Tabs im Browser
+    private ProtectedLocalStorage BrowserSettings { get; set; }
+    
+    //Lokal nur ein Fenster (username und Passwort (beim Nutzer Hashen) speichern) und wenn Token abgelaufen ist, dann neues Token anfordern
+    ////private ProtectedSessionStorage
+    
+    private readonly MudTheme _theme = new();
+        private const string SaveSettingsKey = "threedeedarkmodesetting";
+    
+
+
+
+}
