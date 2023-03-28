@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.AspNetCore.Components.Web;
 using Notes_App_Frontend.Data;
 using MudBlazor.Services;
+using Notes_App_Frontend.Models;
 using Notes_App_Frontend.Service;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +14,8 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddMudServices();
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton<IAuthentication, Authentication>();
+builder.Services.AddScoped<IUser, User>();
+builder.Services.AddScoped<IAuthentication, Authentication>();
 
 var app = builder.Build();
 
