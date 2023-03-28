@@ -1,0 +1,80 @@
+﻿@page "/settings"
+@using System.Text.Json
+@using System.Net
+@using System.Net.Http.Headers
+@using System.Runtime.InteropServices.JavaScript
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@using MudBlazor
+@layout MainLayout
+@inject HttpClient HttpClient;
+
+<PageTitle>Settings</PageTitle>
+<MudLayout>
+      <MudAppBar Elevation="1">
+           <MudIconButton Icon="@Icons.Material.Filled.Menu"  Edge="Edge.Start" OnClick="@ToggleDrawer" />
+           <MudSpacer />
+           <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+       </MudAppBar>
+       <MudDrawer @bind-Open="@open" Elevation="1">
+           <MudDrawerHeader>
+               <MudText Typo="Typo.h6">My App</MudText>
+           </MudDrawerHeader>
+           <MudNavMenu>
+               <MudNavLink Match="NavLinkMatch.All" Href="/sfddsf">Dashboard</MudNavLink>
+               <MudNavLink Match="NavLinkMatch.All" Href="/settings">Settings</MudNavLink>
+           </MudNavMenu>
+       </MudDrawer>
+       <MudMainContent Class="pt-16 px-0">
+
+    <MudText Typo="Typo.h4">Settings</MudText>
+        
+
+
+<MudSwitch @bind-Checked="@_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode"/>
+
+<MudText Class="ma-4">This is an example text!</MudText>
+
+<MudMenu Label="Choose Language">
+    <MudMenuItem>German</MudMenuItem>
+    <MudMenuItem>English</MudMenuItem>
+    
+</MudMenu>
+
+
+</MudMainContent>
+</MudLayout>
+@code
+{
+    bool open = true;
+    private bool _isDarkMode = true;
+    private MudThemeProvider _mudThemeProvider;
+    
+   
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+
+    [Inject] //für alle Tabs im Browser
+    private ProtectedLocalStorage BrowserSettings { get; set; }
+
+    //Lokal nur ein Fenster (username und Passwort (beim Nutzer Hashen) speichern) und wenn Token abgelaufen ist, dann neues Token anfordern
+    ////private ProtectedSessionStorage
+
+
+
+
+
+    
+
+}
+
+
+
+
+    
+
+
+
+}

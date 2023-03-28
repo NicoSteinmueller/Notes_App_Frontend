@@ -2,31 +2,89 @@
 @using System.Text.Json
 @using System.Net
 @using System.Net.Http.Headers
+@using System.Runtime.InteropServices.JavaScript
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using MudBlazor
 @layout MainLayout
 @inject HttpClient HttpClient;
 
 <PageTitle>Index</PageTitle>
+<MudLayout>
+      <MudAppBar Elevation="1">
+           <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
+           <MudSpacer />
+           <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
+       </MudAppBar>
+       <MudDrawer @bind-Open="@open" Elevation="1">
+           <MudDrawerHeader>
+               <MudText Typo="Typo.h6">My App</MudText>
+           </MudDrawerHeader>
+           <MudNavMenu>
+               <MudNavLink Typo="Typo.body2" Match="NavLinkMatch.All" Href="/sfddsf">Dashboard</MudNavLink>
+               <MudSwitch @bind-Checked="Favorites" Align="Align.Start" Typo="Typo.body2" Label="Favorites only" LabelPosition="LabelPosition.Start" Color="Color.Primary"></MudSwitch>
+               <MudMenu Label="Filter by Label" Align="Align.Start" Typo="Typo.body2">
+                    <MudMenuItem>Work</MudMenuItem>
+                    <MudMenuItem>Travel</MudMenuItem>
+               </MudMenu>
+               <MudNavLink Match="NavLinkMatch.All" Typo="Typo.body2" Href="/settings">Settings</MudNavLink>
+               
+           </MudNavMenu>
+       </MudDrawer>
+       <MudMainContent Class="pt-16 px-0">
 
-<h1>Hello, world!</h1>
+    <MudText Typo="Typo.h4">My Notes</MudText>
 
-Welcome to your new app.
 
-<SurveyPrompt Title="How is Blazor working for you?"/>
+    <MudDataGrid Items="@notes" Filterable="false" SortMode="@SortMode.None" Groupable="false">
+        <Columns>
+            <PropertyColumn Property="x => x.Title" />
+            <PropertyColumn Property="x => x.DateTimeCreated" Title="Created"/>
+            <PropertyColumn Property="x => x.DateTimeEdited" Title="Modified" />
+            <PropertyColumn Property="x => x.label" />
+            <TemplateColumn CellClass="d-flex justify-end">
+                <CellTemplate>
+                    <MudStack Row>
+                        <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">View</MudButton>
+                    </MudStack>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudMainContent>
+</MudLayout>
+
 
 @code
 {
    
-   
+    bool open = true;
+
+    void ToggleDrawer()
+    {
+        open = !open;
+    }
+    
+    public record Note(string Title, string text, string DateTimeCreated, string DateTimeEdited, string label);
+    public IEnumerable<Note> notes;
+
+    protected override void OnInitialized()
+    {
+        notes = new List<Note>
+        {
+            new Note("CPA", "asdfgh", "23-01-2022", "23-01-2022", "travel"),
+            new Note("Product Manager", "asdfgh","11-20-2021", "11-20-2021", "work" ),
+            new Note("Developer", "asdfgh","04-12-2022", "04-12-2022", "whw"),
+            new Note("IT Director", "asdfgh","17-02-2022", "17-02-2022", "dAD")
+        };
+    }
+    public bool Favorites { get; set; } = false;
     [Inject] //für alle Tabs im Browser
     private ProtectedLocalStorage BrowserSettings { get; set; }
     
     //Lokal nur ein Fenster (username und Passwort (beim Nutzer Hashen) speichern) und wenn Token abgelaufen ist, dann neues Token anfordern
     ////private ProtectedSessionStorage
     
-    private readonly MudTheme _theme = new();
-        private const string SaveSettingsKey = "threedeedarkmodesetting";
+   
     
 
 

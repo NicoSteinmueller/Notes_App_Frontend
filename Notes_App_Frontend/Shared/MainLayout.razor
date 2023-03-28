@@ -100,14 +100,15 @@ else
             {
                 var rre = await ret.Content.ReadFromJsonAsync<AuthenticationResponseModel>();
                 Console.WriteLine(rre.token);
-            }*/
+            }
             string token = "BEARER eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXM0NnQxMjMiLCJpYXQiOjE2Nzk4NjM3ODYsImV4cCI6MTY3OTg2NTIyNn0.wPx99haE-Lqgsv3wfliRLtNik4zhFHERXvVYyIK5AsraW_Mof7C5d9vLBpcgYgloX_kin3vsdGQiP19QRPt_9Q";
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXM0NnQxMjMiLCJpYXQiOjE2Nzk4NjU1MTksImV4cCI6MTY3OTg2Njk1OX0.-9AQZgnPAIevSYtDCcFttoHq4ovdEPzqfBugJpc_9XRVTzjMwIjx9rJYYop_V7cZmgwygpieyV4-wkKy3gm6Ag");
             var resa = await HttpClient.GetAsync("http://localhost:8080/test/hello");
             isAuthenticated = resa.IsSuccessStatusCode;
+            isAuthenticated = true;
             StateHasChanged();
             var resaa = await resa.Content.ReadAsStringAsync();
-            Console.WriteLine(resaa);
+            Console.WriteLine(resaa);*/
 
 
 
