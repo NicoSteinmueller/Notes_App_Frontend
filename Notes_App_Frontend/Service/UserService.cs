@@ -19,7 +19,7 @@ public class UserService : IUserService
     {
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
         
-        var responseMessage = await _httpClient.GetAsync("http://localhost:8080/api/v0/user/get");
+        var responseMessage = await _httpClient.GetAsync(adress+"/get");
         if (responseMessage.IsSuccessStatusCode)
         {
             var responseUser = await responseMessage.Content.ReadFromJsonAsync<UserApi>();
@@ -33,4 +33,30 @@ public class UserService : IUserService
         }
         return false;
     }
+
+    public async Task<bool> saveUser()
+    {
+        UserApi userApi = new UserApi(_user.FirstName, _user.LastName, _user.email, _user.Settings, _user.Labels);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
+
+        var response = await _httpClient.PutAsJsonAsync(adress + "/update", userApi);
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public async Task<bool> changePassword(ChangePasswordApi changePasswordApi)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
+
+        var response = await _httpClient.PutAsJsonAsync(adress + "/changePassword", changePasswordApi);
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+        return false;
+    }
+
 }
