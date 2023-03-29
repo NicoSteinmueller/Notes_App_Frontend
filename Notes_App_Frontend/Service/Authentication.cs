@@ -1,17 +1,12 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Net.Http.Headers;
 using Notes_App_Frontend.Models;
-
-
 
 namespace Notes_App_Frontend.Service;
 public class Authentication : IAuthentication
 {
     private readonly HttpClient _httpClient;
-    
-    //private ProtectedBrowserStorage BrowserStorage ; nur in Pages /Layout möglich
     private readonly IUser _user;
-    private readonly string adress = "http://localhost:8080/api/v0/auth";
+    private readonly string adress = "http://localhost:8080/api/v0/auth"; //TODO in appsetings auslagern
 
     public Authentication(HttpClient httpClient, IUser user)
     {
@@ -30,6 +25,18 @@ public class Authentication : IAuthentication
             return true;
         }
         
+        return false;
+    }
+
+    public async Task<bool> checkToken(string token)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var response = await _httpClient.GetAsync("http://localhost:8080/test/hello");
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
         return false;
     }
 }

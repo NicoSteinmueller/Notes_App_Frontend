@@ -1,8 +1,13 @@
 ﻿@using MudBlazor
 @using Index = Notes_App_Frontend.Pages.Index
 @using System.Net.Http.Headers
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Notes_App_Frontend.Models
+@using Notes_App_Frontend.Service
+@inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
+@inject IUser User
+@inject IAuthentication Authentication
 @inherits LayoutComponentBase
 
 
@@ -10,7 +15,7 @@
 <MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" Theme="customTheme"/>
 <MudDialogProvider />
 <MudSnackbarProvider />
-@if (isAuthenticated)
+@if (User.IsAuthenticated)
     {
 <MudLayout>
     
@@ -84,34 +89,62 @@ else
             DrawerWidthRight = "300px"
         }
     };
+
+    protected override void OnInitialized()
+    {
+
+    }
+
+    [Inject] 
+    private ProtectedLocalStorage BrowserStorage { get; set; }
     
+
     
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
+            var token = await BrowserStorage.GetAsync<string>("Notes_App_Token");
+            if (!token.Success || !await Authentication.checkToken(token.Value))
+            {
+                User.IsAuthenticated = false;
+                StateHasChanged();
+                NavigationManager.NavigateTo("/Login");
+                return;
+                
+            }
+            User.IsAuthenticated = true;
+            StateHasChanged();
+
+
+            /* 
+            User.IsAuthenticated = true;
 
             _isDarkMode = await _mudThemeProvider.GetSystemPreference();
 
 
             var requestModel = new AuthenticationRequestModel { email = "tes46t123", password = "pass" };
-    /* var ret = await HttpClient.PostAsJsonAsync("http://127.0.0.1:8080/api/v0/auth/authenticate",requestModel);
+    var ret = await HttpClient.PostAsJsonAsync("http://127.0.0.1:8080/api/v0/auth/authenticate",requestModel);
             if ((int) ret.StatusCode==200)
             {
                 var rre = await ret.Content.ReadFromJsonAsync<AuthenticationResponseModel>();
                 Console.WriteLine(rre.token);
-            }*/
-            string token = "BEARER eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXM0NnQxMjMiLCJpYXQiOjE2Nzk4NjM3ODYsImV4cCI6MTY3OTg2NTIyNn0.wPx99haE-Lqgsv3wfliRLtNik4zhFHERXvVYyIK5AsraW_Mof7C5d9vLBpcgYgloX_kin3vsdGQiP19QRPt_9Q";
+            }
+           // string token = "BEARER eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXM0NnQxMjMiLCJpYXQiOjE2Nzk4NjM3ODYsImV4cCI6MTY3OTg2NTIyNn0.wPx99haE-Lqgsv3wfliRLtNik4zhFHERXvVYyIK5AsraW_Mof7C5d9vLBpcgYgloX_kin3vsdGQiP19QRPt_9Q";
             HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXM0NnQxMjMiLCJpYXQiOjE2Nzk4NjU1MTksImV4cCI6MTY3OTg2Njk1OX0.-9AQZgnPAIevSYtDCcFttoHq4ovdEPzqfBugJpc_9XRVTzjMwIjx9rJYYop_V7cZmgwygpieyV4-wkKy3gm6Ag");
             var resa = await HttpClient.GetAsync("http://localhost:8080/test/hello");
-            isAuthenticated = resa.IsSuccessStatusCode;
+            isAuthenticated = User.IsAuthenticated;
             StateHasChanged();
             var resaa = await resa.Content.ReadAsStringAsync();
             Console.WriteLine(resaa);
 
-
-
+            isAuthenticated = false;
+            Console.WriteLine(User.IsAuthenticated);
+*/
         }
+
+        //isAuthenticated = User.IsAuthenticated;
+        
 
     }
     
