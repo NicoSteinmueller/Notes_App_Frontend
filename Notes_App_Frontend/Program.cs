@@ -16,6 +16,7 @@ builder.Services.AddMudServices();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IUser, User>();
 builder.Services.AddScoped<IAuthentication, Authentication>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 

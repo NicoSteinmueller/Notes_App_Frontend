@@ -8,6 +8,7 @@
 @inject HttpClient HttpClient
 @inject IUser User
 @inject IAuthentication Authentication
+@inject IUserService UserService
 @inherits LayoutComponentBase
 
 
@@ -27,8 +28,8 @@
         </MudAppBar>
         <MudDrawer @bind-Open="@openDrawer" Elevation="1">
             <MudNavMenu Class="mud-width-full">
-                <MudText Typo="Typo.h6" Class="px-4">Material</MudText>
-                <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">Icons</MudText>
+                <MudText Typo="Typo.h6" Class="px-4">@User.FirstName @User.LastName</MudText>
+                <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">@User.email</MudText>
                 <MudDivider Class="my-2"/>
                 <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
                 <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
@@ -129,8 +130,14 @@ else
                     
                     return;
                 }
-                BrowserStorage.SetAsync("Notes_App_Token", User.Token);
+                
             }
+            if (!await UserService.getUser())
+            {
+                User.IsAuthenticated = false;
+                return;
+            }
+            BrowserStorage.SetAsync("Notes_App_Token", User.Token);
             User.IsAuthenticated = true;
             NavigationManager.NavigateTo("/dashboard");
 
