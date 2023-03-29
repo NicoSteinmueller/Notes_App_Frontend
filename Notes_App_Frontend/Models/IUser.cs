@@ -4,5 +4,5 @@ public interface IUser
 {
     string Token { get; set; }
     bool IsAuthenticated { get; set; }
-    string Username { get; set; }
+    string email { get; set; }
 }

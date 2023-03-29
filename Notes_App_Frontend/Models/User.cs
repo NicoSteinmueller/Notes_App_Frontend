@@ -4,5 +4,5 @@ public class User : IUser
 {
     public string Token { get; set; }
     public bool IsAuthenticated { get; set; }
-    public string Username { get; set; }
+    public string email { get; set; }
 }
