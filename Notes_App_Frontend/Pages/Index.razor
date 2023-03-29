@@ -1,4 +1,4 @@
-﻿@page "/sfddsf"
+﻿@page "/"
 @using System.Text.Json
 @using System.Net
 @using System.Net.Http.Headers
@@ -7,6 +7,8 @@
 @using MudBlazor
 @layout MainLayout
 @inject HttpClient HttpClient;
+@using Notes_App_Frontend.Components
+@using Notes_App_Frontend.Models
 
 <PageTitle>Index</PageTitle>
 <MudLayout>
@@ -31,12 +33,7 @@
                    </MudStack>
                    <MudText Typo="Typo.body2" Class="pl-7">Labels:</MudText>
                    <MudStack Class="pl-9"AlignItems="AlignItems.Start">
-                   @foreach (Label label in labels)
-                   {
-                       <MudCheckBox Class="mt-n2" Checked="false" LabelPosition="LabelPosition.Start" Size="Size.Small">
-                           <MudText Typo="Typo.body2">@label.Name</MudText>
-                       </MudCheckBox>
-                   }
+                 
                    </MudStack>
                <MudNavLink Match="NavLinkMatch.All" Href="/settings">
                    <MudText Align="Align.Start" Typo="Typo.body2">Settings</MudText>
@@ -52,24 +49,13 @@
 
            <MudGrid Class="pt-5" Spacing="2" Justify="Justify.FlexStart">
                
-               @foreach (Note note in notes)
+               @foreach (NotesViewModel note in notes)
                {
-               <MudItem>
-                    <MudCard>
-                        <MudCardHeader>
-                            <MudText Typo="Typo.body2">@note.DateTimeEdited</MudText>
-                        </MudCardHeader>
-                        <MudCardContent>
-                            <MudStack Row="true">
-                                <MudText Typo="Typo.h6">@note.Title</MudText>
-                                <MudButton Href="/">View</MudButton>
-                            </MudStack>
-                        </MudCardContent>
-               </MudCard>
-               </MudItem>
+                   <SimpleNote Note="note"></SimpleNote> 
                }
                
            </MudGrid>
+           
 </MudMainContent>
 </MudLayout>
 
@@ -84,25 +70,20 @@
         open = !open;
     }
     
-    public record Note(int id, string Title, string text, string DateTimeCreated, string DateTimeEdited, string label);
-    public IEnumerable<Note> notes;
-    public record Label(string Name);
-    public IEnumerable<Label> labels;
+    public IEnumerable<NotesViewModel> notes;
+    
 
     protected override void OnInitialized()
     {
-        notes = new List<Note>
+        notes = new List<NotesViewModel>
         {
-            new Note(1, "CPA", "asdfgh", "23-01-2022", "23-01-2022", "travel"),
-            new Note(2, "Product Manager", "asdfgh","11-20-2021", "11-20-2021", "work" ),
-            new Note(3, "Developer", "asdfgh","04-12-2022", "04-12-2022", "whw"),
-            new Note(4, "IT Director", "asdfgh","17-02-2022", "17-02-2022", "dAD")
+            new() {Id = 1, Title = "CPA", Text = "asdfgh", Edited = DateTime.Now, Label = "travel"},
+            new() {Id = 2, Title = "asd", Text = "deddede", Edited = DateTime.Now, Label = "work"},
+            new() {Id = 3, Title = "wer", Text = "gbgvbg", Edited = DateTime.Now, Label = "travel"},
+            new() {Id = 4, Title = "ert", Text = "asrfrr", Edited = DateTime.Now, Label = "work"},
+            
         };
-        labels = new List<Label>
-        {
-            new Label("Work"),
-            new Label("Travel")
-        };
+        
     }
 
   

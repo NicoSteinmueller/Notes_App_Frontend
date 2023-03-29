@@ -1,0 +1,49 @@
+﻿@using MudBlazor
+@using Notes_App_Frontend.Pages
+@using Index = Notes_App_Frontend.Pages.Index
+
+
+<h3>Component</h3>
+
+
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1"/>
+            Delete server?
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudTextField T="string" Label="Multiline" Variant="Variant.Text" @bind-Value="@_sampleText" Lines="20" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Color="Color.Error" OnClick="DeleteServer">Delete Server</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter]
+    public Index.Note Note { get; set; }
+
+    private string _sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+    protected override void OnParametersSet()
+    {
+        _sampleText = Note.Text;
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    private void DeleteServer()
+    {
+    MudDialog.Close(DialogResult.Ok(_sampleText));
+    }
+    
+}

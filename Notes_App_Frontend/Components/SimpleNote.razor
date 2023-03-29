@@ -1,0 +1,40 @@
+﻿@using MudBlazor
+@using Index = Notes_App_Frontend.Pages.Index
+@inject IDialogService DialogService
+
+
+<MudItem>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.body2">@Note.DateTimeEdited</MudText>
+            <MudRating></MudRating>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudStack Row="true">
+                <MudText Typo="Typo.h6">@Note.Title</MudText>
+                <MudButton OnClick="OnButtonClickedAsync">View</MudButton>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
+</MudItem>
+
+@code {
+    
+    
+
+    private async Task OnButtonClickedAsync()
+    {
+        var parameters = new DialogParameters { ["Note"]=Note };
+        var dialog = await DialogService.ShowAsync<NoteEditDialog>(Note.Title, parameters); 
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            Note.Text = 
+            Console.WriteLine(result.Data);
+        }
+    }
+    [Parameter]
+    public Index.Note Note { get; set; }
+    
+}
+
