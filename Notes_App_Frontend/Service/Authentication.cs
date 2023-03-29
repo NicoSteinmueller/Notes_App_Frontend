@@ -50,6 +50,7 @@ public class Authentication : IAuthentication
         var response = await _httpClient.GetAsync("http://localhost:8080/test/hello");
         if (response.IsSuccessStatusCode)
         {
+            _user.Token = token;
             return true;
         }
 

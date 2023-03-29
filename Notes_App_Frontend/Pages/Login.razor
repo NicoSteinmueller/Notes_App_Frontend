@@ -4,6 +4,7 @@
 @inject NavigationManager NavigationManager
 @inject IAuthentication Authentication
 @inject IUser User
+@inject IUserService UserService;
 @using System.ComponentModel.DataAnnotations
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
@@ -97,12 +98,7 @@
     {
         if (await Authentication.login(_loginModel.Email, _loginModel.Password))
         {
-            _loginError = false;
-            User.IsAuthenticated = true;
-            await BrowserStorage.SetAsync("Notes_App_Token", User.Token);
-            await BrowserStorage.SetAsync("Notes_App_Auth", _loginModel);
-            NavigationManager.NavigateTo("/dashboard");
-            StateHasChanged();
+            _loginError = !await CompleteAuthentication();
         }
         else
         {
@@ -114,12 +110,7 @@
     {
         if (await Authentication.register(_registrationModel))
         {
-            _registerError = false;
-            User.IsAuthenticated = true;
-            await BrowserStorage.SetAsync("Notes_App_Token", User.Token);
-            await BrowserStorage.SetAsync("Notes_App_Auth", _loginModel);
-            NavigationManager.NavigateTo("/dashboard");
-            StateHasChanged();
+            _registerError = !await CompleteAuthentication();
         }
         else
         {
@@ -127,7 +118,20 @@
         }
     }
     
-    
+    private async Task<bool> CompleteAuthentication()
+    {
+        if (await UserService.getUser())
+        {
+            User.IsAuthenticated = true;
+            await BrowserStorage.SetAsync("Notes_App_Token", User.Token);
+            await BrowserStorage.SetAsync("Notes_App_Auth", _loginModel);
+            NavigationManager.NavigateTo("/dashboard");
+            StateHasChanged();
+            return true;
+        }
+        return false;
+
+    }
 
 
     private IEnumerable<string> PasswordStrength(string pw)
