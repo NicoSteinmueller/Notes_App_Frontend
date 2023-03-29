@@ -23,7 +23,7 @@
             <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer"/>
             <MudSpacer/>
             <MudIconButton Icon="@Icons.Custom.Brands.MudBlazor" Color="Color.Inherit" Link="https://mudblazor.com/" Target="_blank"/>
-            <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor/" Target="_blank"/>
+            <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Inherit" OnClick="@Logout" Target="_blank"/>
         </MudAppBar>
         <MudDrawer @bind-Open="@openDrawer" Elevation="1">
             <MudNavMenu Class="mud-width-full">
@@ -68,7 +68,17 @@ else
         openDrawer = !openDrawer;
     }
 
-
+    void Logout()
+    {
+        User.IsAuthenticated = false;
+        User.Token = "";
+        User.Username = "";
+        BrowserStorage.DeleteAsync("Notes_App_Token");
+        StateHasChanged();
+    }
+    
+    
+    
         //overridden by ThemeProvider
     MudTheme customTheme = new MudTheme()
     {
@@ -108,13 +118,11 @@ else
             if (!token.Success || !await Authentication.checkToken(token.Value))
             {
                 User.IsAuthenticated = false;
-                StateHasChanged();
                 NavigationManager.NavigateTo("/Login");
                 return;
                 
             }
             User.IsAuthenticated = true;
-            StateHasChanged();
 
 
             /* 
@@ -143,7 +151,10 @@ else
 */
         }
 
-        //isAuthenticated = User.IsAuthenticated;
+        if (!User.IsAuthenticated)
+        {
+            NavigationManager.NavigateTo("/Login");
+        }
         
 
     }
