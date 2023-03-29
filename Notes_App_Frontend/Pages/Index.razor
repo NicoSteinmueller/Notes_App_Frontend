@@ -20,43 +20,63 @@
                <MudText Typo="Typo.h6">My App</MudText>
            </MudDrawerHeader>
            <MudNavMenu>
-               <MudNavLink Typo="Typo.body2" Match="NavLinkMatch.All" Href="/sfddsf">Dashboard</MudNavLink>
-               <MudSwitch @bind-Checked="Favorites" Align="Align.Start" Typo="Typo.body2" Label="Favorites only" LabelPosition="LabelPosition.Start" Color="Color.Primary"></MudSwitch>
-               <MudMenu Label="Filter by Label" Align="Align.Start" Typo="Typo.body2">
-                    <MudMenuItem>Work</MudMenuItem>
-                    <MudMenuItem>Travel</MudMenuItem>
-               </MudMenu>
-               <MudNavLink Match="NavLinkMatch.All" Typo="Typo.body2" Href="/settings">Settings</MudNavLink>
-               
+               <MudStack>
+                   <MudNavLink Match="NavLinkMatch.All" Href="/sfddsf">
+                       <MudText Align="Align.Start" Typo="Typo.body2">Dashboard</MudText>
+                   </MudNavLink>
+                   <MudStack AlignItems="AlignItems.Start" Class="pl-3 pt-n2">
+                   <MudSwitch @bind-Checked="Favorites" Size="Size.Small" LabelPosition="LabelPosition.Start" Color="Color.Primary">
+                       <MudText Align="Align.Start" Typo="Typo.body2">Favorites only</MudText>
+                   </MudSwitch>
+                   </MudStack>
+                   <MudText Typo="Typo.body2" Class="pl-7">Labels:</MudText>
+                   <MudStack Class="pl-9"AlignItems="AlignItems.Start">
+                   @foreach (Label label in labels)
+                   {
+                       <MudCheckBox Class="mt-n2" Checked="false" LabelPosition="LabelPosition.Start" Size="Size.Small">
+                           <MudText Typo="Typo.body2">@label.Name</MudText>
+                       </MudCheckBox>
+                   }
+                   </MudStack>
+               <MudNavLink Match="NavLinkMatch.All" Href="/settings">
+                   <MudText Align="Align.Start" Typo="Typo.body2">Settings</MudText>
+               </MudNavLink>
+               </MudStack>
+
            </MudNavMenu>
        </MudDrawer>
        <MudMainContent Class="pt-16 px-0">
 
-    <MudText Typo="Typo.h4">My Notes</MudText>
+    <MudText Class="pt-5"Typo="Typo.h4">My Notes</MudText>
+    <MudSpacer></MudSpacer>
 
-
-    <MudDataGrid Items="@notes" Filterable="false" SortMode="@SortMode.None" Groupable="false">
-        <Columns>
-            <PropertyColumn Property="x => x.Title" />
-            <PropertyColumn Property="x => x.DateTimeCreated" Title="Created"/>
-            <PropertyColumn Property="x => x.DateTimeEdited" Title="Modified" />
-            <PropertyColumn Property="x => x.label" />
-            <TemplateColumn CellClass="d-flex justify-end">
-                <CellTemplate>
-                    <MudStack Row>
-                        <MudButton Size="@Size.Small" Variant="@Variant.Filled" Color="@Color.Primary">View</MudButton>
-                    </MudStack>
-                </CellTemplate>
-            </TemplateColumn>
-        </Columns>
-    </MudDataGrid>
+           <MudGrid Class="pt-5" Spacing="2" Justify="Justify.FlexStart">
+               
+               @foreach (Note note in notes)
+               {
+               <MudItem>
+                    <MudCard>
+                        <MudCardHeader>
+                            <MudText Typo="Typo.body2">@note.DateTimeEdited</MudText>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudStack Row="true">
+                                <MudText Typo="Typo.h6">@note.Title</MudText>
+                                <MudButton Href="/">View</MudButton>
+                            </MudStack>
+                        </MudCardContent>
+               </MudCard>
+               </MudItem>
+               }
+               
+           </MudGrid>
 </MudMainContent>
 </MudLayout>
 
 
 @code
 {
-   
+    public bool Basic_CheckBox1 { get; set; } = true;
     bool open = true;
 
     void ToggleDrawer()
@@ -64,19 +84,29 @@
         open = !open;
     }
     
-    public record Note(string Title, string text, string DateTimeCreated, string DateTimeEdited, string label);
+    public record Note(int id, string Title, string text, string DateTimeCreated, string DateTimeEdited, string label);
     public IEnumerable<Note> notes;
+    public record Label(string Name);
+    public IEnumerable<Label> labels;
 
     protected override void OnInitialized()
     {
         notes = new List<Note>
         {
-            new Note("CPA", "asdfgh", "23-01-2022", "23-01-2022", "travel"),
-            new Note("Product Manager", "asdfgh","11-20-2021", "11-20-2021", "work" ),
-            new Note("Developer", "asdfgh","04-12-2022", "04-12-2022", "whw"),
-            new Note("IT Director", "asdfgh","17-02-2022", "17-02-2022", "dAD")
+            new Note(1, "CPA", "asdfgh", "23-01-2022", "23-01-2022", "travel"),
+            new Note(2, "Product Manager", "asdfgh","11-20-2021", "11-20-2021", "work" ),
+            new Note(3, "Developer", "asdfgh","04-12-2022", "04-12-2022", "whw"),
+            new Note(4, "IT Director", "asdfgh","17-02-2022", "17-02-2022", "dAD")
+        };
+        labels = new List<Label>
+        {
+            new Label("Work"),
+            new Label("Travel")
         };
     }
+
+  
+    
     public bool Favorites { get; set; } = false;
     [Inject] //für alle Tabs im Browser
     private ProtectedLocalStorage BrowserSettings { get; set; }
