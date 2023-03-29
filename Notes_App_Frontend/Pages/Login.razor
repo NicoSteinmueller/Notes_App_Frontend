@@ -5,91 +5,151 @@
 @inject IAuthentication Authentication
 @inject IUser User
 @using System.ComponentModel.DataAnnotations
+@using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 @using Notes_App_Frontend.Models
 @using Notes_App_Frontend.Service
 
-<PageTitle>Login</PageTitle>
 
-<EditForm Model="@model" OnValidSubmit="OnValidSubmit">
-<DataAnnotationsValidator/>
+<PageTitle>Login</PageTitle>
 <MudGrid>
-    <MudItem xs="12" sm="7">
-        <MudCard>
-            <MudCardContent>
-                <MudTextField Label="Email" Class="mt-3"
-                              @bind-Value="model.Email" For="@(() => model.Email)"/>
-                <MudTextField Label="Password" HelperText="Input your Password" Class="mt-3"
-                              @bind-Value="model.Password" For="@(() => model.Password)" InputType="InputType.Password"/>
-            </MudCardContent>
-            <MudCardActions>
-                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
-            </MudCardActions>
-        </MudCard>
-    </MudItem>
-    <MudItem xs="12" sm="5">
-        <MudPaper Class="pa-4 mud-height-full">
-            <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
-            @if (success)
-            {
-                <MudText Color="Color.Success">Success</MudText>
-            }
-            else
-            {
-                <MudText Color="@Color.Error">
-                    <ValidationSummary />
-                </MudText>
-            }
-        </MudPaper>
-    </MudItem>
-    <MudItem xs="12">
-        <MudText Typo="Typo.body2" Align="Align.Center">
-            Fill out the form correctly to see the success message.
-        </MudText>
-    </MudItem>
+    <MudSwitch @bind-Checked="_isLoginActive" >Switch to Registration / Login</MudSwitch>
+    @if (_isLoginActive)
+    {
+        <!-- Login start-->
+        <MudItem xs="12" sm="7">
+
+            <MudPaper Class="pa-4">
+                <MudForm @ref="form" @bind-IsValid="@_loginSuccess">
+                    <MudText Typo="Typo.h3" Align="Align.Center">Login</MudText>
+                    <MudTextField T="string" Label="Email" @bind-Value="_loginModel.Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                    <MudTextField T="string" Label="Password" @bind-Value="_loginModel.Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!"/>
+                    @if (_loginError)
+                    {
+                        <MudAlert Severity="Severity.Error"> Login invalid</MudAlert>
+                    }
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_loginSuccess)" Class="ml-auto" OnClick="@ValidLogin">Login</MudButton>
+                </MudForm>
+            </MudPaper>
+
+        </MudItem>
+        <!-- Login end-->
+    }
+    else
+    {
+        <!-- Registration start-->
+        <MudItem xs="12" sm="7">
+            <MudPaper Class="pa-4">
+                <MudForm @ref="form" @bind-IsValid="@registrationSuccess">
+                    <MudText Typo="Typo.h3" Align="Align.Center">Registration</MudText>
+                    <MudTextField T="string" Label="first Name" @bind-Value="_registrationModel.FirstName" Required="true" RequiredError="first name is required!"/>
+                    <MudTextField T="string" Label="last Name" @bind-Value="_registrationModel.LastName" Required="true" RequiredError="last name is required!"/>
+                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="_registrationModel.Email"
+                                  Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                    <MudTextField T="string" Label="Password" @bind-Value="_registrationModel.Password" HelperText="Choose a strong password" @ref="pwField1"
+                                  InputType="InputType.Password"
+                                  Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                                  RequiredError="Password is required!"/>
+                    <MudTextField T="string"
+                                  Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                                  Validation="@(new Func<string, string>(PasswordMatch))"/>
+                    @if (_registerError)
+                    {
+                        <MudAlert Severity="Severity.Error"> Login invalid</MudAlert>
+                    }
+                    <!-- <div class="d-flex">
+                        <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+                            <MudRadio Option="@("Personal")">Personal</MudRadio>
+                            <MudRadio Option="@("Professional")">Professional</MudRadio>
+                        </MudRadioGroup>
+                    </div> -->
+                    <div class="d-flex align-center justify-space-between">
+                        <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Label="I agree to the terms of use!"/>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!registrationSuccess)" Class="ml-auto" OnClick="@ValidRegister">Register</MudButton>
+                    </div>
+                </MudForm>
+            </MudPaper>
+        </MudItem>
+        <!-- Registration end-->
+    }
+
 </MudGrid>
-</EditForm>
 
 
 @code {
     
     [Inject] //für alle Tabs im Browser
     private ProtectedLocalStorage BrowserStorage { get; set; }
-    
-    RegisterAccountForm model = new RegisterAccountForm();
-    bool success;
-    
-    
 
-    public class RegisterAccountForm
+    LoginModel _loginModel = new LoginModel();
+    RegistrationModel _registrationModel = new RegistrationModel();
+    bool _loginSuccess;
+    bool _loginError = false;
+    bool _registerError = false;
+    bool _isLoginActive = true;
+
+    private async void ValidLogin()
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(64, ErrorMessage = "The password must be at least 8 and a maximum of 64 characters long.", MinimumLength = 8)]
-        public string Password { get; set; }
-
-    }
-
-    private async void OnValidSubmit(EditContext context)
-    {
-        
-
-        if (await Authentication.login(model.Email, model.Password))
+        if (await Authentication.login(_loginModel.Email, _loginModel.Password))
         {
-            success = true;
+            _loginError = false;
             User.IsAuthenticated = true;
-            BrowserStorage.SetAsync("Notes_App_Token", User.Token);
+            await BrowserStorage.SetAsync("Notes_App_Token", User.Token);
+            await BrowserStorage.SetAsync("Notes_App_Auth", _loginModel);
             NavigationManager.NavigateTo("/");
+            StateHasChanged();
         }
         else
         {
-            success = false;
+            _loginError = true;
         }
-        
-        StateHasChanged();
+    }
+
+    private async void ValidRegister()
+    {
+        if (await Authentication.register(_registrationModel))
+        {
+            _registerError = false;
+            User.IsAuthenticated = true;
+            await BrowserStorage.SetAsync("Notes_App_Token", User.Token);
+            await BrowserStorage.SetAsync("Notes_App_Auth", _loginModel);
+            NavigationManager.NavigateTo("/");
+            StateHasChanged();
+        }
+        else
+        {
+            _registerError = true;
+        }
+    }
+    
+    
+    bool registrationSuccess;
+    MudTextField<string> pwField1;
+    MudForm form;
+
+    private IEnumerable<string> PasswordStrength(string pw)
+    {
+        if (string.IsNullOrWhiteSpace(pw))
+        {
+            yield return "Password is required!";
+            yield break;
+        }
+        if (pw.Length < 8)
+            yield return "Password must be at least of length 8";
+        if (!Regex.IsMatch(pw, @"[A-Z]"))
+            yield return "Password must contain at least one capital letter";
+        if (!Regex.IsMatch(pw, @"[a-z]"))
+            yield return "Password must contain at least one lowercase letter";
+        if (!Regex.IsMatch(pw, @"[0-9]"))
+            yield return "Password must contain at least one digit";
+    }
+
+    private string PasswordMatch(string arg)
+    {
+        if (pwField1.Value != arg)
+            return "Passwords don't match";
+        return null;
     }
 
 }

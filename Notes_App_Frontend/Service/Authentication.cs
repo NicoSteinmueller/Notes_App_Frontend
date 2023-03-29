@@ -17,14 +17,30 @@ public class Authentication : IAuthentication
     public async Task<bool> login(string inEmail, string inPassword)
     {
         var requestModel = new AuthenticationRequestModel { email = inEmail, password = inPassword };
-        var responseMessage = await _httpClient.PostAsJsonAsync("http://localhost:8080/api/v0/auth/authenticate", requestModel);
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+        var responseMessage = await _httpClient.PostAsJsonAsync(adress+"/authenticate", requestModel);
         if (responseMessage.IsSuccessStatusCode)
         {
             var responseToken = await responseMessage.Content.ReadFromJsonAsync<AuthenticationResponseModel>();
             _user.Token = responseToken.token;
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
             return true;
         }
         
+        return false;
+    }
+
+    public async Task<bool> register(RegistrationModel registrationModel)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = null;
+        var responseMessage = await _httpClient.PostAsJsonAsync(adress + "/register", registrationModel);
+        if (responseMessage.IsSuccessStatusCode)
+        {
+            var responseToken = await responseMessage.Content.ReadFromJsonAsync<AuthenticationResponseModel>();
+            _user.Token = responseToken.token;
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
+            return true;
+        }
         return false;
     }
 

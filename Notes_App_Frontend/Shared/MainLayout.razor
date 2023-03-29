@@ -74,6 +74,7 @@ else
         User.Token = "";
         User.Username = "";
         BrowserStorage.DeleteAsync("Notes_App_Token");
+        BrowserStorage.DeleteAsync("Notes_App_Auth");
         StateHasChanged();
     }
     
