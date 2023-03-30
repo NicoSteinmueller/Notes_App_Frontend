@@ -1,0 +1,47 @@
+﻿@using MudBlazor
+@using Notes_App_Frontend.Models
+@inject IDialogService DialogService
+
+
+<MudItem>
+    <MudCard>
+        <MudCardHeader>
+            <MudText Typo="Typo.body2">@Note.Edited</MudText>
+            <MudToggleIconButton  Toggled="Note.Favorite" @onclick="OnToggleButtonClicked" Icon="@Icons.Material.Filled.StarOutline" ToggledIcon="@Icons.Material.Filled.Star"></MudToggleIconButton>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudStack Row="true">
+                <MudText Typo="Typo.h6">@Note.Title</MudText>
+                <MudButton OnClick="OnButtonClickedAsync">View</MudButton>
+            </MudStack>
+        </MudCardContent>
+    </MudCard>
+</MudItem>
+
+@code {
+
+    private async Task OnToggleButtonClicked()
+    {
+        Note.Favorite = !Note.Favorite;
+    }
+    
+
+    private async Task OnButtonClickedAsync()
+    {
+        var parameters = new DialogParameters { ["Note"]=Note };
+        var dialog = await DialogService.ShowAsync<NoteEditDialog>(Note.Title, parameters); 
+        var result = await dialog.Result;
+        if (!result.Canceled)
+        {
+            bool haschanged = (bool)result.Data;
+            if (haschanged)
+            {
+                //implement server requests 
+            }
+        }
+    }
+    [Parameter]
+    public NotesViewModel Note { get; set; }
+    
+}
+
