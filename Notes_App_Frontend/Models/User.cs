@@ -7,7 +7,7 @@ public class User : IUser
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Email { get; set; }
-    public Settings Settings { get; set; }
+    public Settings Settings { get; set; } = new Settings { DarkModeOn = false, Language = Language.ENGLISH };
     public List<NoteShort> NotesShort { get; set; } = new List<NoteShort>();
 
     public void UpdateWithUserApi(UserApi userApi)
