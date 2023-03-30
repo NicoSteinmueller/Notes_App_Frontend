@@ -1,4 +1,5 @@
 ﻿@using MudBlazor
+@using Notes_App_Frontend.Models
 @using Notes_App_Frontend.Pages
 @using Index = Notes_App_Frontend.Pages.Index
 
@@ -10,16 +11,22 @@
 <MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
-            <MudIcon Icon="@Icons.Material.Filled.DeleteForever" Class="mr-3 mb-n1"/>
-            Delete server?
+            @Note.Title
         </MudText>
     </TitleContent>
+    
     <DialogContent>
+        <MudSelect MultiSelection="true" T="string" @bind-SelectedValues="options" @bind-Value="_selectedLabel" Label="Label" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
+            @foreach (string note in Labels)
+            {
+                <MudSelectItem T="string" Value="note"/>
+            }
+        </MudSelect>
         <MudTextField T="string" Label="Multiline" Variant="Variant.Text" @bind-Value="@_sampleText" Lines="20" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
-        <MudButton Color="Color.Error" OnClick="DeleteServer">Delete Server</MudButton>
+        <MudButton Color="Color.Error" OnClick="SaveChanges">Save</MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -27,13 +34,23 @@
     
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter]
-    public Index.Note Note { get; set; }
+    public NotesViewModel Note { get; set; }
 
     private string _sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
+    private IEnumerable<string> options { get; set; } = new HashSet<string>();
+    
+    public List<string> Labels { get; set; }
+
+    private string _selectedLabel = "";
     protected override void OnParametersSet()
     {
         _sampleText = Note.Text;
+        Labels = new() { "work", "travel", "exploring", "football" };
+        foreach (var label in Note.Labels)
+        {
+            options = options.Append(label);
+        }
     }
 
     private void Cancel()
@@ -41,9 +58,15 @@
         MudDialog.Cancel();
     }
 
-    private void DeleteServer()
+    private void SaveChanges()
     {
-    MudDialog.Close(DialogResult.Ok(_sampleText));
+        Note.Labels.Clear();
+        foreach (var option in options)
+        {
+            
+            Note.Labels.Add(option);
+        }
+        MudDialog.Close(DialogResult.Ok(true));
     }
     
 }

@@ -1,4 +1,5 @@
 ﻿@using MudBlazor
+@using Notes_App_Frontend.Models
 @using Index = Notes_App_Frontend.Pages.Index
 @inject IDialogService DialogService
 
@@ -6,8 +7,8 @@
 <MudItem>
     <MudCard>
         <MudCardHeader>
-            <MudText Typo="Typo.body2">@Note.DateTimeEdited</MudText>
-            <MudRating></MudRating>
+            <MudText Typo="Typo.body2">@Note.Edited</MudText>
+            <MudToggleIconButton  Toggled="Note.Favorite" @onclick="OnToggleButtonClicked" Icon="@Icons.Material.Filled.StarOutline" ToggledIcon="@Icons.Material.Filled.Star"></MudToggleIconButton>
         </MudCardHeader>
         <MudCardContent>
             <MudStack Row="true">
@@ -19,7 +20,11 @@
 </MudItem>
 
 @code {
-    
+
+    private async Task OnToggleButtonClicked()
+    {
+        Note.Favorite = !Note.Favorite;
+    }
     
 
     private async Task OnButtonClickedAsync()
@@ -29,12 +34,15 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
-            Note.Text = 
-            Console.WriteLine(result.Data);
+            bool haschanged = (bool)result.Data;
+            if (haschanged)
+            {
+                //implement server requests 
+            }
         }
     }
     [Parameter]
-    public Index.Note Note { get; set; }
+    public NotesViewModel Note { get; set; }
     
 }
 

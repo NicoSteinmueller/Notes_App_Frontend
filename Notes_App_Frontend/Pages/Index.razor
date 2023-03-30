@@ -27,9 +27,9 @@
                        <MudText Align="Align.Start" Typo="Typo.body2">Dashboard</MudText>
                    </MudNavLink>
                    <MudStack AlignItems="AlignItems.Start" Class="pl-3 pt-n2">
-                   <MudSwitch @bind-Checked="Favorites" Size="Size.Small" LabelPosition="LabelPosition.Start" Color="Color.Primary">
-                       <MudText Align="Align.Start" Typo="Typo.body2">Favorites only</MudText>
-                   </MudSwitch>
+                       <MudCheckBox @bind-Checked="FavoritesOnly" LabelPosition="LabelPosition.Start">
+                           <MudText Typo="Typo.body2">Favorites only</MudText>
+                       </MudCheckBox>
                    </MudStack>
                    <MudText Typo="Typo.body2" Class="pl-7">Labels:</MudText>
                    <MudStack Class="pl-9"AlignItems="AlignItems.Start">
@@ -39,7 +39,8 @@
                    <MudText Align="Align.Start" Typo="Typo.body2">Settings</MudText>
                </MudNavLink>
                </MudStack>
-
+               
+              
            </MudNavMenu>
        </MudDrawer>
        <MudMainContent Class="pt-16 px-0">
@@ -51,12 +52,16 @@
                
                @foreach (NotesViewModel note in notes)
                {
-                   <SimpleNote Note="note"></SimpleNote> 
+                   if (FavoritesOnly && note.Favorite || FavoritesOnly == false)
+                   {
+                       <SimpleNote Note="note"></SimpleNote> 
+                   }
+                   
                }
                
            </MudGrid>
            
-</MudMainContent>
+       </MudMainContent>
 </MudLayout>
 
 
@@ -65,10 +70,17 @@
     public bool Basic_CheckBox1 { get; set; } = true;
     bool open = true;
 
+    private void EventFinished(int test)
+    {
+        Console.WriteLine("We're done!"+ test);
+    }
+    
     void ToggleDrawer()
     {
         open = !open;
     }
+    
+    public bool FavoritesOnly { get; set; }
     
     public IEnumerable<NotesViewModel> notes;
     
@@ -77,10 +89,10 @@
     {
         notes = new List<NotesViewModel>
         {
-            new() {Id = 1, Title = "CPA", Text = "asdfgh", Edited = DateTime.Now, Label = "travel"},
-            new() {Id = 2, Title = "asd", Text = "deddede", Edited = DateTime.Now, Label = "work"},
-            new() {Id = 3, Title = "wer", Text = "gbgvbg", Edited = DateTime.Now, Label = "travel"},
-            new() {Id = 4, Title = "ert", Text = "asrfrr", Edited = DateTime.Now, Label = "work"},
+            new() {Id = 1, Title = "CPA", Text = "asdfgh", Favorite = true, Edited = DateTime.Now, Labels = new ()},
+            new() {Id = 2, Title = "asd", Text = "deddede", Edited = DateTime.Now, Labels = new (){"work"}},
+            new() {Id = 3, Title = "wer", Text = "gbgvbg", Edited = DateTime.Now, Labels = new(){"travel"}},
+            new() {Id = 4, Title = "ert", Text = "asrfrr", Favorite = true, Edited = DateTime.Now, Labels = new() {"work","travel"}},
             
         };
         

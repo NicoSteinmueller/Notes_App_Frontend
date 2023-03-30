@@ -6,5 +6,7 @@ public class NotesViewModel
     public string Title { get; set; }
     public string Text { get; set; }
     public DateTime Edited { get; set; }
-    public string Label { get; set; }
+    
+    public bool Favorite { get; set; }
+    public List<string> Labels { get; set; }
 }
