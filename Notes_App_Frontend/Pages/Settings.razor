@@ -36,14 +36,10 @@
             <MudSelectItem Value="@Language.GERMAN">@Language.GERMAN</MudSelectItem>
             <MudSelectItem Value="@Language.ENGLISH">@Language.ENGLISH</MudSelectItem>
         </MudSelect>
-        @if (_saveError)
-        {
-            <MudAlert Severity="Severity.Error"> Save failed!</MudAlert>
-        }
+        <MudStack AlignItems="AlignItems.End">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_saveUnlock)" Class="ml-auto" OnClick="@SaveSettings">Save</MudButton>
+        </MudStack><MudSpacer/>
         
-        <MudButton OnClick="@SaveSettings">Save</MudButton>
-
-        <MudSpacer/>
         <MudText Class="pt-5" Typo="Typo.h4">Change password</MudText>
         <MudForm @ref="_form" @bind-IsValid="@_changePasswordUnlock">
               <MudTextField T="string" Label="current Password"  HelperText="Input our current password" @ref="_oldPassword"
@@ -57,13 +53,10 @@
             <MudTextField T="string"
                           Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
                           Validation="@(new Func<string, string>(PasswordMatch))"/>
-            @if (_changePasswordError)
-            {
-                <MudAlert Severity="Severity.Error"> Password change failed!</MudAlert>
-            }
-            
+
+            <MudStack AlignItems="AlignItems.End">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_changePasswordUnlock)" Class="ml-auto" OnClick="@ChangePassword">Change Password</MudButton>
-            
+            </MudStack>
         </MudForm>
 
         
@@ -102,8 +95,13 @@
             {
                 await BrowserSettings.SetAsync("Notes_App_Auth", new LoginModel { Email = User.Email, Password = loginModel.Value.Password });
             }
-            Snackbar.Add("Settings saved");
+            Snackbar.Add("Settings saved", Severity.Success);
         }
+        else
+        {
+            Snackbar.Add("Settings not saved", Severity.Error);
+        }
+        _saveUnlock = false;
     }
 
     private async Task ChangePassword()
@@ -114,8 +112,14 @@
         if (!_changePasswordError)
         {
             await BrowserSettings.SetAsync("Notes_App_Auth", new LoginModel { Email = User.Email, Password = _newPassword.Value });
-            Snackbar.Add("Password changed");
+            Snackbar.Add("Password changed", Severity.Success);
+            
         }
+        else
+        {
+            Snackbar.Add("Password not changed", Severity.Error);
+        }
+        _changePasswordUnlock = false;
     }
     
     
