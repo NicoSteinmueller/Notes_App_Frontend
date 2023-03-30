@@ -6,9 +6,9 @@ public interface IUser
     bool IsAuthenticated { get; set; }
     string FirstName { get; set; }
     string LastName { get; set; }
-    string email { get; set; }
+    string Email { get; set; }
     Settings Settings { get; set; }
-    List<string> Labels { get; set; }
+    List<NoteShort> NotesShort { get; set; }
 
-    public void updateWithUserApi(UserApi userApi);
+    public void UpdateWithUserApi(UserApi userApi);
 }

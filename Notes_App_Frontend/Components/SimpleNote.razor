@@ -6,7 +6,7 @@
 <MudItem>
     <MudCard>
         <MudCardHeader>
-            <MudText Typo="Typo.body2">@Note.Edited</MudText>
+            <MudText Typo="Typo.body2">@Note.Modified</MudText>
             <MudToggleIconButton  Toggled="Note.Favorite" @onclick="OnToggleButtonClicked" Icon="@Icons.Material.Filled.StarOutline" ToggledIcon="@Icons.Material.Filled.Star"></MudToggleIconButton>
         </MudCardHeader>
         <MudCardContent>
@@ -41,7 +41,7 @@
         }
     }
     [Parameter]
-    public NotesViewModel Note { get; set; }
+    public NoteShort Note { get; set; }
     
 }
 

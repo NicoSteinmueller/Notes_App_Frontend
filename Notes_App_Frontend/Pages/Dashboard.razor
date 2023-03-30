@@ -8,8 +8,11 @@
 @layout MainLayout
 @inject HttpClient HttpClient;
 @inject IMenuSettings MenuSettings;
+@inject INoteService NoteService
+@inject IUser User;
 @using Notes_App_Frontend.Components
 @using Notes_App_Frontend.Models
+@using Notes_App_Frontend.Service
 
 <PageTitle>Index</PageTitle>
 <MudLayout>
@@ -21,7 +24,7 @@
 
            <MudGrid Class="pt-5" Spacing="2" Justify="Justify.FlexStart">
                
-               @foreach (NotesViewModel note in notes)
+               @foreach (NoteShort note in User.NotesShort)
                {
                    if (MenuSettings.FavoritesOnly && note.Favorite || MenuSettings.FavoritesOnly == false)
                    {
@@ -54,16 +57,24 @@
     
     
     public IEnumerable<NotesViewModel> notes;
-    
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            User.NotesShort = await NoteService.GetAllNotesShort();
+            StateHasChanged();
+        }
+    }
 
     protected override void OnInitialized()
     {
         notes = new List<NotesViewModel>
         {
-            new() {Id = 1, Title = "CPA", Text = "asdfgh", Favorite = true, Edited = DateTime.Now, Labels = new ()},
-            new() {Id = 2, Title = "asd", Text = "deddede", Edited = DateTime.Now, Labels = new (){"work"}},
-            new() {Id = 3, Title = "wer", Text = "gbgvbg", Edited = DateTime.Now, Labels = new(){"travel"}},
-            new() {Id = 4, Title = "ert", Text = "asrfrr", Favorite = true, Edited = DateTime.Now, Labels = new() {"work","travel"}},
+            new() {Id = 1, Title = "CPA", Text = "asdfgh", Favorite = true, Edited = DateTime.Now},
+            new() {Id = 2, Title = "asd", Text = "deddede", Edited = DateTime.Now},
+            new() {Id = 3, Title = "wer", Text = "gbgvbg", Edited = DateTime.Now},
+            new() {Id = 4, Title = "ert", Text = "asrfrr", Favorite = true, Edited = DateTime.Now},
             
         };
         

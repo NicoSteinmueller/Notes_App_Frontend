@@ -27,7 +27,7 @@ public class UserService : IUserService
             {
                 return false;
             }
-            _user.updateWithUserApi(responseUser);
+            _user.UpdateWithUserApi(responseUser);
             
             return true;
         }
@@ -36,7 +36,7 @@ public class UserService : IUserService
 
     public async Task<bool> saveUser()
     {
-        UserApi userApi = new UserApi(_user.FirstName, _user.LastName, _user.email, _user.Settings, _user.Labels);
+        UserApi userApi = new UserApi(_user.FirstName, _user.LastName, _user.Email, _user.Settings);
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
 
         var response = await _httpClient.PutAsJsonAsync(adress + "/update", userApi);

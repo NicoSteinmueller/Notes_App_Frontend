@@ -23,7 +23,7 @@
         <MudForm  @bind-IsValid="@_saveUnlock">
             <MudTextField T="string" Label="first Name" @bind-Value="User.FirstName" Required="true" RequiredError="first name is required!"/>
             <MudTextField T="string" Label="last Name" @bind-Value="User.LastName" Required="true" RequiredError="last name is required!"/>
-            <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="User.email"
+            <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="User.Email"
                           Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
                             
         </MudForm>
@@ -100,7 +100,7 @@
             var loginModel = await BrowserSettings.GetAsync<LoginModel>("Notes_App_Auth");
             if (loginModel.Success)
             {
-                await BrowserSettings.SetAsync("Notes_App_Auth", new LoginModel { Email = User.email, Password = loginModel.Value.Password });
+                await BrowserSettings.SetAsync("Notes_App_Auth", new LoginModel { Email = User.Email, Password = loginModel.Value.Password });
             }
             Snackbar.Add("Settings saved");
             StateHasChanged();
@@ -114,7 +114,7 @@
         
         if (!_changePasswordError)
         {
-            await BrowserSettings.SetAsync("Notes_App_Auth", new LoginModel { Email = User.email, Password = _newPassword.Value });
+            await BrowserSettings.SetAsync("Notes_App_Auth", new LoginModel { Email = User.Email, Password = _newPassword.Value });
             Snackbar.Add("Password changed");
         }
     }

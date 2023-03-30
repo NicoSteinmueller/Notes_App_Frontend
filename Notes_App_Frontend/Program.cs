@@ -16,6 +16,7 @@ builder.Services.AddScoped<IUser, User>();
 builder.Services.AddScoped<IAuthentication, Authentication>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IMenuSettings, MenuSettings>();
+builder.Services.AddScoped<INoteService, NoteService>();
 
 var app = builder.Build();
 

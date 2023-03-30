@@ -8,5 +8,4 @@ public class NotesViewModel
     public DateTime Edited { get; set; }
     
     public bool Favorite { get; set; }
-    public List<string> Labels { get; set; }
 }

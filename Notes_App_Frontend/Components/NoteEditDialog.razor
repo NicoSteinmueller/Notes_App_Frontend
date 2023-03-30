@@ -15,12 +15,7 @@
     </TitleContent>
     
     <DialogContent>
-        <MudSelect MultiSelection="true" T="string" @bind-SelectedValues="options" @bind-Value="_selectedLabel" Label="Label" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomCenter">
-            @foreach (string note in Labels)
-            {
-                <MudSelectItem T="string" Value="note"/>
-            }
-        </MudSelect>
+
         <MudTextField T="string" Label="Multiline" Variant="Variant.Text" @bind-Value="@_sampleText" Lines="20" />
     </DialogContent>
     <DialogActions>
@@ -39,18 +34,9 @@
 
     private IEnumerable<string> options { get; set; } = new HashSet<string>();
     
-    public List<string> Labels { get; set; }
 
-    private string _selectedLabel = "";
-    protected override void OnParametersSet()
-    {
-        _sampleText = Note.Text;
-        Labels = new() { "work", "travel", "exploring", "football" };
-        foreach (var label in Note.Labels)
-        {
-            options = options.Append(label);
-        }
-    }
+
+
 
     private void Cancel()
     {
@@ -59,12 +45,7 @@
 
     private void SaveChanges()
     {
-        Note.Labels.Clear();
-        foreach (var option in options)
-        {
-            
-            Note.Labels.Add(option);
-        }
+
         MudDialog.Close(DialogResult.Ok(true));
     }
     
