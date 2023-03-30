@@ -7,4 +7,5 @@ public interface INoteService
     Task<List<NoteShort>> GetAllNotesShort();
     Task<Note> GetNote(string id);
     Task<Note> SaveNote(Note note);
+    Task<(NoteShort, bool)> SetNoteFavorite(NoteShort noteShort);
 }

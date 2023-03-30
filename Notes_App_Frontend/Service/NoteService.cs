@@ -54,4 +54,16 @@ public class NoteService : INoteService
 
         return new Note();
     }
+    
+    public async Task<(NoteShort, bool)> SetNoteFavorite(NoteShort noteShort)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
+        var response = await _httpClient.PostAsJsonAsync(adress + "/setNoteFavorite", noteShort);
+        if (response.IsSuccessStatusCode)
+        {
+            return (await response.Content.ReadFromJsonAsync<NoteShort>() ?? new NoteShort(), true);
+        }
+
+        return (new NoteShort(), false);
+    }
 }

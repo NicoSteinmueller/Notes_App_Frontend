@@ -3,6 +3,7 @@
 @using Notes_App_Frontend.Service
 @inject IDialogService DialogService
 @inject INoteService NoteService
+@inject ISnackbar Snackbar
 
 <MudItem>
     <MudCard>
@@ -24,6 +25,19 @@
     private async Task OnToggleButtonClicked()
     {
         Note.Favorite = !Note.Favorite;
+        var responseNote = new NoteShort();
+        bool responseBool;
+        (responseNote, responseBool) = await NoteService.SetNoteFavorite(Note);
+        if (responseBool && responseNote.Favorite == Note.Favorite)
+        {
+            Snackbar.Add("Favorite status saved!", Severity.Success);
+            Note = responseNote;
+        }
+        else
+        {
+            Snackbar.Add("Favorite status not saved!", Severity.Error);
+            Note.Favorite = !Note.Favorite;
+        }
     }
     
 
