@@ -1,10 +1,9 @@
 ﻿@using MudBlazor
 @using Notes_App_Frontend.Models
 @using Notes_App_Frontend.Pages
-
-
-<h3>Component</h3>
-
+@using Notes_App_Frontend.Service
+@inject INoteService NoteService
+@inject ISnackbar Snackbar;
 
 
 <MudDialog>
@@ -16,7 +15,7 @@
     
     <DialogContent>
 
-        <MudTextField T="string" Label="Multiline" Variant="Variant.Text" @bind-Value="@_sampleText" Lines="20" />
+        <MudTextField T="string" Label="Multiline" Variant="Variant.Text" @bind-Value="@Note.Text" Lines="20" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -28,25 +27,27 @@
     
     [CascadingParameter] MudDialogInstance MudDialog { get; set; }
     [Parameter]
-    public NotesViewModel Note { get; set; }
+    public Note Note { get; set; }
 
-    private string _sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-
-    private IEnumerable<string> options { get; set; } = new HashSet<string>();
     
-
-
-
-
     private void Cancel()
     {
         MudDialog.Cancel();
     }
 
-    private void SaveChanges()
+    private async void SaveChanges()
     {
-
-        MudDialog.Close(DialogResult.Ok(true));
+        var saveResult = await NoteService.SaveNote(Note);
+        if (saveResult.ID.Length == 0)
+        {
+            Snackbar.Add("Note don't save!", Severity.Error);
+        }
+        else
+        {
+            Snackbar.Add("Note saved!", Severity.Success);
+            Note = saveResult;
+        } 
+        //MudDialog.Close(DialogResult.Ok(true));
     }
     
 }

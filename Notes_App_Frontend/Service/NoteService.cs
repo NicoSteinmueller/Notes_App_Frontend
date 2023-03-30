@@ -30,4 +30,28 @@ public class NoteService : INoteService
 
         return new List<NoteShort>();
     }
+
+    public async Task<Note> GetNote(string id)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
+        var response = await _httpClient.GetAsync(adress + "/getNote?noteId=" + id);
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<Note>() ?? new Note();
+        }
+
+        return new Note();
+    }
+
+    public async Task<Note> SaveNote(Note note)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
+        var response = await _httpClient.PostAsJsonAsync(adress + "/saveNote", note);
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<Note>() ?? new Note();
+        }
+
+        return new Note();
+    }
 }

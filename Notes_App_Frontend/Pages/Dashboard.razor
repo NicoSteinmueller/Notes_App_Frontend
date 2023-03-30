@@ -41,7 +41,7 @@
 
 @code
 {
-    public bool Basic_CheckBox1 { get; set; } = true;
+
     bool open = true;
 
     private void EventFinished(int test)
@@ -54,9 +54,7 @@
         open = !open;
     }
     
-    
-    
-    public IEnumerable<NotesViewModel> notes;
+
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -69,14 +67,7 @@
 
     protected override void OnInitialized()
     {
-        notes = new List<NotesViewModel>
-        {
-            new() {Id = 1, Title = "CPA", Text = "asdfgh", Favorite = true, Edited = DateTime.Now},
-            new() {Id = 2, Title = "asd", Text = "deddede", Edited = DateTime.Now},
-            new() {Id = 3, Title = "wer", Text = "gbgvbg", Edited = DateTime.Now},
-            new() {Id = 4, Title = "ert", Text = "asrfrr", Favorite = true, Edited = DateTime.Now},
-            
-        };
+
         
     }
 
