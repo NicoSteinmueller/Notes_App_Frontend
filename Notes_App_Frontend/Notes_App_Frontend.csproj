@@ -29,4 +29,9 @@
       <_ContentIncludedByDefault Remove="wwwroot\css\open-iconic\README.md" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\Images\Dashboard.jpg" />
+      <None Include="wwwroot\Images\Login.jpg" />
+    </ItemGroup>
+
 </Project>

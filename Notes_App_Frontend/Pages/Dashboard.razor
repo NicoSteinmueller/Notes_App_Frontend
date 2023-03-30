@@ -12,6 +12,19 @@
 @using Notes_App_Frontend.Models
 
 <PageTitle>Index</PageTitle>
+<div class="z-0"><MudImage Class="dashboardImage z-0" Src="Images/Dashboard.jpg"  />
+<style>
+   .dashboardImage{
+   position: fixed;
+   width: 100vw; 
+       top: 0;
+       left: 0;
+       height:100vh;
+       z-index: 0;
+     
+   } 
+</style>
+</div>
 <MudLayout>
       
        <MudMainContent Class="pt-16 px-0">
@@ -46,11 +59,7 @@
         Console.WriteLine("We're done!"+ test);
     }
     
-    void ToggleDrawer()
-    {
-        open = !open;
-    }
-    
+   
     
     
     public IEnumerable<NotesViewModel> notes;

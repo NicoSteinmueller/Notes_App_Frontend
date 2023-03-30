@@ -5,6 +5,7 @@
 @inject IAuthentication Authentication
 @inject IUser User
 @inject IUserService UserService;
+
 @using System.ComponentModel.DataAnnotations
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
@@ -12,70 +13,92 @@
 @using Notes_App_Frontend.Service
 
 
+<div class="z-0"><MudImage Class="loginImage z-0" Src="Images/Login.jpg"  />
+<style>
+   .loginImage{
+   position: fixed;
+   width: 100vw; 
+       top: 0;
+       left: 0;
+       height:100vh;
+       z-index: 0;
+     
+   } 
+</style>
+</div>
+
 <PageTitle>Login</PageTitle>
-<MudGrid>
-    <MudSwitch @bind-Checked="_isLoginActive" >Switch to Registration / Login</MudSwitch>
-    @if (_isLoginActive)
-    {
-        <!-- Login start-->
-        <MudItem xs="12" sm="7">
 
-            <MudPaper Class="pa-4">
-                <MudForm @ref="_form" @bind-IsValid="@_loginSuccess">
-                    <MudText Typo="Typo.h3" Align="Align.Center">Login</MudText>
-                    <MudTextField T="string" Label="Email" @bind-Value="_loginModel.Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
-                    <MudTextField T="string" Label="Password" @bind-Value="_loginModel.Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!"/>
-                    @if (_loginError)
-                    {
-                        <MudAlert Severity="Severity.Error"> Login invalid</MudAlert>
-                    }
 
-                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_loginSuccess)" Class="ml-auto" OnClick="@ValidLogin">Login</MudButton>
-                </MudForm>
-            </MudPaper>
+<MudMainContent>
+    <MudGrid Class="z-20">
+    
+        
+        @if (_isLoginActive)
+        {
+            <!-- Login start-->
+            <MudItem xs="12" sm="7" Class="mx-auto mt-40 z-20">
 
-        </MudItem>
-        <!-- Login end-->
-    }
-    else
-    {
-        <!-- Registration start-->
-        <MudItem xs="12" sm="7">
-            <MudPaper Class="pa-4">
-                <MudForm @ref="_form" @bind-IsValid="@_registrationSuccess">
-                    <MudText Typo="Typo.h3" Align="Align.Center">Registration</MudText>
-                    <MudTextField T="string" Label="first Name" @bind-Value="_registrationModel.FirstName" Required="true" RequiredError="first name is required!"/>
-                    <MudTextField T="string" Label="last Name" @bind-Value="_registrationModel.LastName" Required="true" RequiredError="last name is required!"/>
-                    <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="_registrationModel.Email"
-                                  Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
-                    <MudTextField T="string" Label="Password" @bind-Value="_registrationModel.Password" HelperText="Choose a strong password" @ref="_pwField1"
-                                  InputType="InputType.Password"
-                                  Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
-                                  RequiredError="Password is required!"/>
-                    <MudTextField T="string"
-                                  Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
-                                  Validation="@(new Func<string, string>(PasswordMatch))"/>
-                    @if (_registerError)
-                    {
-                        <MudAlert Severity="Severity.Error"> Login invalid</MudAlert>
-                    }
-                    <!-- <div class="d-flex">
-                        <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
-                            <MudRadio Option="@("Personal")">Personal</MudRadio>
-                            <MudRadio Option="@("Professional")">Professional</MudRadio>
-                        </MudRadioGroup>
-                    </div> -->
-                    <div class="d-flex align-center justify-space-between">
-                        <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Label="I agree to the terms of use!"/>
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_registrationSuccess)" Class="ml-auto" OnClick="@ValidRegister">Register</MudButton>
-                    </div>
-                </MudForm>
-            </MudPaper>
-        </MudItem>
-        <!-- Registration end-->
-    }
+                <MudPaper Class="pa-4 mx-auto" Style="background: floralwhite">
+                    <MudForm @ref="_form" @bind-IsValid="@_loginSuccess">
+                        <MudText Class="z-30" Typo="Typo.h4" Align="Align.Center">Login</MudText>
+                        <MudTextField Class="z-30" T="string" Label="Email" @bind-Value="_loginModel.Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                        <MudTextField Class="z-30" T="string" Label="Password" @bind-Value="_loginModel.Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!"/>
+                        @if (_loginError)
+                        {
+                            <MudAlert Class="z-30" Severity="Severity.Error"> Login invalid</MudAlert>
+                        }
 
-</MudGrid>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_loginSuccess)" Class="ml-auto z-30" OnClick="@ValidLogin">Login</MudButton>
+                        <MudButton Variant="Variant.Text" OnClick="@LoginRegistrationSwitch">Register instead</MudButton>
+                    </MudForm>
+                </MudPaper>
+
+            </MudItem>
+            <!-- Login end-->
+        }
+        else
+        {
+            <!-- Registration start-->
+            <MudItem xs="12" sm="7" Class="mx-auto z-20">
+                <MudPaper Class="pa-4" Style="background: floralwhite">
+                    <MudForm @ref="_form" @bind-IsValid="@_registrationSuccess">
+                        <MudText Typo="Typo.h4" Align="Align.Center">Registration</MudText>
+                        <MudTextField T="string" Label="first Name" @bind-Value="_registrationModel.FirstName" Required="true" RequiredError="first name is required!"/>
+                        <MudTextField T="string" Label="last Name" @bind-Value="_registrationModel.LastName" Required="true" RequiredError="last name is required!"/>
+                        <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="_registrationModel.Email"
+                                      Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+                        <MudTextField T="string" Label="Password" @bind-Value="_registrationModel.Password" HelperText="Choose a strong password" @ref="_pwField1"
+                                      InputType="InputType.Password"
+                                      Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                                      RequiredError="Password is required!"/>
+                        <MudTextField T="string"
+                                      Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                                      Validation="@(new Func<string, string>(PasswordMatch))"/>
+                        @if (_registerError)
+                        {
+                            <MudAlert Severity="Severity.Error"> Login invalid</MudAlert>
+                        }
+                        <!-- <div class="d-flex">
+                            <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
+                                <MudRadio Option="@("Personal")">Personal</MudRadio>
+                                <MudRadio Option="@("Professional")">Professional</MudRadio>
+                            </MudRadioGroup>
+                        </div> -->
+                        <div class="d-flex align-center justify-space-between">
+                            <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Label="I agree to the terms of use!"/>
+                            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_registrationSuccess)" Class="ml-auto" OnClick="@ValidRegister">Register</MudButton>
+                            <MudButton Variant="Variant.Text" OnClick="@LoginRegistrationSwitch">Sign in instead</MudButton>
+                        </div>
+                    </MudForm>
+                </MudPaper>
+            </MudItem>
+            <!-- Registration end-->
+        }
+        
+    </MudGrid>
+</MudMainContent>
+
 
 
 @code {
@@ -93,6 +116,11 @@
     bool _registrationSuccess;
     MudTextField<string> _pwField1;
     MudForm _form;
+
+    private void LoginRegistrationSwitch()
+    {
+        _isLoginActive = !_isLoginActive;
+    }
 
     private async void ValidLogin()
     {

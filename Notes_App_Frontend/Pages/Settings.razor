@@ -15,60 +15,69 @@
 @inject IUser User;
 @inject IUserService UserService;
 @inject ISnackbar Snackbar;
+ 
 
-<MudLayout>
+
+
+
+
+
     <MudMainContent>
-        <MudText Class="pt-5"Typo="Typo.h4">Settings</MudText>
-        
-        <MudForm  @bind-IsValid="@_saveUnlock">
-            <MudTextField T="string" Label="first Name" @bind-Value="User.FirstName" Required="true" RequiredError="first name is required!"/>
-            <MudTextField T="string" Label="last Name" @bind-Value="User.LastName" Required="true" RequiredError="last name is required!"/>
-            <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="User.email"
-                          Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
-                            
-        </MudForm>
+    
+       
         
         
-        <MudStack Class="pt-5" AlignItems="AlignItems.Start">
-            <MudSwitch LabelPosition="LabelPosition.Start" Color="Color.Primary" T="bool" Label="Toggle Light/Dark Mode"/>
-        </MudStack>
-        <MudSelect @bind-Value="@User.Settings.Language">
-            <MudSelectItem Value="@Language.GERMAN">@Language.GERMAN</MudSelectItem>
-            <MudSelectItem Value="@Language.ENGLISH">@Language.ENGLISH</MudSelectItem>
-        </MudSelect>
-        @if (_saveError)
-        {
-            <MudAlert Severity="Severity.Error"> Save failed!</MudAlert>
-        }
-        
-        <MudButton OnClick="@SaveSettings">Save</MudButton>
-
-        <MudSpacer/>
-        <MudText Class="pt-5" Typo="Typo.h4">Change password</MudText>
-        <MudForm @ref="_form" @bind-IsValid="@_changePasswordUnlock">
-              <MudTextField T="string" Label="current Password"  HelperText="Input our current password" @ref="_oldPassword"
-                                      InputType="InputType.Password"
-                                      Required="true"
-                                      RequiredError="Password is required!"/>
-            <MudTextField T="string" Label="new Password" HelperText="Choose a strong password" @ref="_newPassword"
-                          InputType="InputType.Password"
-                          Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
-                          RequiredError="Password is required!"/>
-            <MudTextField T="string"
-                          Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
-                          Validation="@(new Func<string, string>(PasswordMatch))"/>
-            @if (_changePasswordError)
-            {
-                <MudAlert Severity="Severity.Error"> Password change failed!</MudAlert>
-            }
             
+                <MudText Class="mt-4" Typo="Typo.h4" >Settings</MudText>
+   
+                
+                    <MudForm @bind-IsValid="@_saveUnlock">
+                        <MudTextField T="string" Label="first Name" @bind-Value="User.FirstName" Required="true" RequiredError="first name is required!"/>
+                        <MudTextField T="string" Label="last Name" @bind-Value="User.LastName" Required="true" RequiredError="last name is required!"/>
+                        <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="User.email"
+                                      Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
+
+                    </MudForm>
+                    <MudSwitch @bind-Checked="@_isDarkMode" ><MudText Typo="Typo.body2">Toggle Light/Dark Mode</MudText></MudSwitch>
+                    <MudSelect @bind-Value="@User.Settings.Language" Label="Select Language">
+                        <MudSelectItem Value="@Language.GERMAN"><MudText Typo="Typo.body2">@Language.GERMAN</MudText></MudSelectItem>
+                        <MudSelectItem Value="@Language.ENGLISH"><MudText Typo="Typo.body2">@Language.ENGLISH</MudText></MudSelectItem>
+                    </MudSelect>
+                    @if (_saveError)
+                    {
+                        <MudAlert Severity="Severity.Error"> Save failed!</MudAlert>
+                    }
+                    <MudStack AlignItems="AlignItems.End">
+                        <MudButton Variant="Variant.Filled" OnClick="@SaveSettings">Save Settings</MudButton>
+                    </MudStack>
+               
+    
+           
+            <MudSpacer/>
+            <MudText Class="pt-5" Typo="Typo.h4">Change password</MudText>
+            <MudForm @ref="_form" @bind-IsValid="@_changePasswordUnlock">
+                <MudTextField T="string" Label="current Password" HelperText="Input our current password" @ref="_oldPassword"
+                              InputType="InputType.Password"
+                              Required="true"
+                              RequiredError="Password is required!"/>
+                <MudTextField T="string" Label="new Password" HelperText="Choose a strong password" @ref="_newPassword"
+                              InputType="InputType.Password"
+                              Validation="@(new Func<string, IEnumerable<string>>(PasswordStrength))" Required="true"
+                              RequiredError="Password is required!"/>
+                <MudTextField T="string"
+                              Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
+                              Validation="@(new Func<string, string>(PasswordMatch))"/>
+                @if (_changePasswordError)
+                {
+                    <MudAlert Severity="Severity.Error"> Password change failed!</MudAlert>
+                }
+                <MudStack AlignItems="AlignItems.End">
                 <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_changePasswordUnlock)" Class="ml-auto" OnClick="@ChangePassword">Change Password</MudButton>
-            
-        </MudForm>
-
-        
+                </MudStack>
+            </MudForm>
+       
     </MudMainContent>
-</MudLayout>
+
 
 
 
@@ -79,12 +88,14 @@
 
     private bool _saveError;
     private bool _saveUnlock = true;
-
+    public bool _isDarkMode { get; set;  } = false;
     bool _changePasswordError;
     bool _changePasswordUnlock;
     MudTextField<string> _newPassword;
     MudTextField<string> _oldPassword;
     MudForm _form;
+
+  
 
     
     private async void SaveSettings()
