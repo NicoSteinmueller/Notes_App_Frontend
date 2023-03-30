@@ -7,42 +7,13 @@
 @using MudBlazor
 @layout MainLayout
 @inject HttpClient HttpClient;
+@inject IMenuSettings MenuSettings;
 @using Notes_App_Frontend.Components
 @using Notes_App_Frontend.Models
 
 <PageTitle>Index</PageTitle>
 <MudLayout>
-      <MudAppBar Elevation="1">
-           <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-           <MudSpacer />
-           <MudIconButton Icon="@Icons.Custom.Brands.GitHub" Color="Color.Inherit" Link="https://github.com/MudBlazor/MudBlazor" Target="_blank" />
-       </MudAppBar>
-       <MudDrawer @bind-Open="@open" Elevation="1">
-           <MudDrawerHeader>
-               <MudText Typo="Typo.h6">My App</MudText>
-           </MudDrawerHeader>
-           <MudNavMenu>
-               <MudStack>
-                   <MudNavLink Match="NavLinkMatch.All" Href="/sfddsf">
-                       <MudText Align="Align.Start" Typo="Typo.body2">Dashboard</MudText>
-                   </MudNavLink>
-                   <MudStack AlignItems="AlignItems.Start" Class="pl-3 pt-n2">
-                       <MudCheckBox @bind-Checked="FavoritesOnly" LabelPosition="LabelPosition.Start">
-                           <MudText Typo="Typo.body2">Favorites only</MudText>
-                       </MudCheckBox>
-                   </MudStack>
-                   <MudText Typo="Typo.body2" Class="pl-7">Labels:</MudText>
-                   <MudStack Class="pl-9"AlignItems="AlignItems.Start">
-                 
-                   </MudStack>
-               <MudNavLink Match="NavLinkMatch.All" Href="/settings">
-                   <MudText Align="Align.Start" Typo="Typo.body2">Settings</MudText>
-               </MudNavLink>
-               </MudStack>
-               
-              
-           </MudNavMenu>
-       </MudDrawer>
+      
        <MudMainContent Class="pt-16 px-0">
 
     <MudText Class="pt-5"Typo="Typo.h4">My Notes</MudText>
@@ -52,7 +23,7 @@
                
                @foreach (NotesViewModel note in notes)
                {
-                   if (FavoritesOnly && note.Favorite || FavoritesOnly == false)
+                   if (MenuSettings.FavoritesOnly && note.Favorite || MenuSettings.FavoritesOnly == false)
                    {
                        <SimpleNote Note="note"></SimpleNote> 
                    }
@@ -80,7 +51,7 @@
         open = !open;
     }
     
-    public bool FavoritesOnly { get; set; }
+    
     
     public IEnumerable<NotesViewModel> notes;
     
@@ -98,9 +69,7 @@
         
     }
 
-  
     
-    public bool Favorites { get; set; } = false;
     [Inject] //für alle Tabs im Browser
     private ProtectedLocalStorage BrowserSettings { get; set; }
     

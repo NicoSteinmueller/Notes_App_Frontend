@@ -9,6 +9,7 @@
 @inject IUser User
 @inject IAuthentication Authentication
 @inject IUserService UserService
+@inject IMenuSettings MenuSettings
 @inherits LayoutComponentBase
 
 
@@ -32,7 +33,15 @@
                 <MudText Typo="Typo.body2" Class="px-4 mud-text-secondary">@User.email</MudText>
                 <MudDivider Class="my-2"/>
                 <MudNavLink Href="/dashboard" Icon="@Icons.Material.Filled.Dashboard">Dashboard</MudNavLink>
-                <MudNavLink Href="/servers" Icon="@Icons.Material.Filled.Storage">Servers</MudNavLink>
+                <MudStack AlignItems="AlignItems.Start" Class="pl-3 pt-n2">
+                                       <MudCheckBox @bind-Checked="MenuSettings.FavoritesOnly"  LabelPosition="LabelPosition.Start">
+                                           <MudText Typo="Typo.body2">Favorites only</MudText>
+                                       </MudCheckBox>
+                                   </MudStack>
+                                   <MudText Typo="Typo.body2" Class="pl-7">Labels:</MudText>
+                                   <MudStack Class="pl-9"AlignItems="AlignItems.Start">
+                                 
+                                   </MudStack>
                 <MudNavLink Href="/settings" Icon="@Icons.Material.Filled.Settings" >Settings</MudNavLink>
             </MudNavMenu>
 
@@ -154,6 +163,7 @@ else
 
     }
     
-
+    
+    
     public bool isAuthenticated { get; set; }
 }
