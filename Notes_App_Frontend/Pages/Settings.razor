@@ -25,13 +25,13 @@
             <MudTextField T="string" Label="last Name" @bind-Value="User.LastName" Required="true" RequiredError="last name is required!"/>
             <MudTextField T="string" Label="Email" Required="true" RequiredError="Email is required!" @bind-Value="User.Email"
                           Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
-                            
+            <MudStack Class="pt-5" AlignItems="AlignItems.Start">
+                        <MudSwitch @bind-Checked="@User.Settings.DarkModeOn"  LabelPosition="LabelPosition.Start" Color="Color.Primary" T="bool" Label="Toggle Light/Dark Mode"/>
+            </MudStack>
         </MudForm>
         
         
-        <MudStack Class="pt-5" AlignItems="AlignItems.Start">
-            <MudSwitch LabelPosition="LabelPosition.Start" Color="Color.Primary" T="bool" Label="Toggle Light/Dark Mode"/>
-        </MudStack>
+        
         <MudSelect @bind-Value="@User.Settings.Language">
             <MudSelectItem Value="@Language.GERMAN">@Language.GERMAN</MudSelectItem>
             <MudSelectItem Value="@Language.ENGLISH">@Language.ENGLISH</MudSelectItem>
@@ -87,7 +87,7 @@
     MudForm _form;
 
     
-    private async void SaveSettings()
+    private async Task SaveSettings()
     {
         if (!_saveUnlock)
         {
@@ -103,11 +103,10 @@
                 await BrowserSettings.SetAsync("Notes_App_Auth", new LoginModel { Email = User.Email, Password = loginModel.Value.Password });
             }
             Snackbar.Add("Settings saved");
-            StateHasChanged();
         }
     }
 
-    private async void ChangePassword()
+    private async Task ChangePassword()
     {
         var changePasswordApi = new ChangePasswordApi(_oldPassword.Value, _newPassword.Value);
         _changePasswordError = !await UserService.changePassword(changePasswordApi);

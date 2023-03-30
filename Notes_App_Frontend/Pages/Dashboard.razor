@@ -21,7 +21,12 @@
 
     <MudText Class="pt-5"Typo="Typo.h4">My Notes</MudText>
     <MudSpacer></MudSpacer>
-
+           <MudStack AlignItems="AlignItems.Start" Class="pl-3 pt-n2">
+               <MudCheckBox @bind-Checked="MenuSettings.FavoritesOnly"  LabelPosition="LabelPosition.Start">
+                   <MudText Typo="Typo.body2">Favorites only</MudText>
+               </MudCheckBox>
+           </MudStack>
+           
            <MudGrid Class="pt-5" Spacing="2" Justify="Justify.FlexStart">
                
                @foreach (NoteShort note in User.NotesShort)
