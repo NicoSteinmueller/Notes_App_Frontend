@@ -10,6 +10,7 @@
 @inject IMenuSettings MenuSettings;
 @inject INoteService NoteService
 @inject IUser User;
+@inject IDialogService DialogService
 @using Notes_App_Frontend.Components
 @using Notes_App_Frontend.Models
 @using Notes_App_Frontend.Service
@@ -36,8 +37,18 @@
                    {
                        <SimpleNote Note="note"></SimpleNote> 
                    }
-                   
                }
+               <MudItem>
+                   <MudCard>
+                       <MudCardHeader>
+                           <MudText Typo="Typo.body2">new Note</MudText>
+                           
+                       </MudCardHeader>
+                       <MudCardContent>
+                           <MudToggleIconButton  @onclick="@AddNote" Icon="@Icons.Material.Filled.Add" Size="Size.Large"></MudToggleIconButton>
+                       </MudCardContent>
+                   </MudCard>
+               </MudItem>
                
            </MudGrid>
            
@@ -77,6 +88,24 @@
         
     }
 
+    private async Task AddNote()
+    {
+        var note = new Note();
+        note.Title = "new Note";
+        note.Text = "Your Text";
+        note.ID = "";
+        
+        var parameters = new DialogParameters { ["Note"]=note };
+        var options = new DialogOptions() {MaxWidth = MaxWidth.Medium, FullWidth = true, DisableBackdropClick = true };
+        var dialog = await DialogService.ShowAsync<NoteEditDialog>(note.Title, parameters, options); 
+        var result = await dialog.Result;
+
+            User.NotesShort = await NoteService.GetAllNotesShort();
+            StateHasChanged();
+        
+    }
+    
+    
     
     [Inject] //für alle Tabs im Browser
     private ProtectedLocalStorage BrowserSettings { get; set; }

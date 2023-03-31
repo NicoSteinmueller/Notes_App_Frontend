@@ -6,16 +6,14 @@
 @inject ISnackbar Snackbar;
 
 
-<MudDialog>
+<MudDialog FullWidth="true" MaxWidth="MaxWidth.Medium" >
     <TitleContent>
-        <MudText Typo="Typo.h6">
-            @Note.Title
-        </MudText>
+        <MudTextField T="string" Typo="Typo.h6" Variant="Variant.Text" @bind-Value="@Note.Title" Lines="1"/>
     </TitleContent>
     
-    <DialogContent>
+    <DialogContent >
 
-        <MudTextField T="string" Label="Multiline" Variant="Variant.Text" @bind-Value="@Note.Text" Lines="20" />
+        <MudTextField T="string" Label="Text" Variant="Variant.Text" @bind-Value="@Note.Text" Lines="20" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Cancel</MudButton>
@@ -46,6 +44,7 @@
         {
             Snackbar.Add("Note saved!", Severity.Success);
             Note = saveResult;
+            DialogResult.Ok(true);
         } 
         //MudDialog.Close(DialogResult.Ok(true));
     }
