@@ -4,8 +4,8 @@
 @inject NavigationManager NavigationManager
 @inject IAuthentication Authentication
 @inject IUser User
-@inject IUserService UserService;
-
+@inject IUserService UserService
+@inject ISnackbar Snackbar
 @using System.ComponentModel.DataAnnotations
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
@@ -39,16 +39,11 @@
             <!-- Login start-->
             <MudItem xs="12" sm="7" Class="mx-auto mt-40 z-20">
 
-                <MudPaper Class="pa-4 mx-auto" Style="background: floralwhite">
+                <MudPaper Class="pa-4 mx-auto" >
                     <MudForm @ref="_form" @bind-IsValid="@_loginSuccess">
                         <MudText Class="z-30" Typo="Typo.h4" Align="Align.Center">Login</MudText>
                         <MudTextField Class="z-30" T="string" Label="Email" @bind-Value="_loginModel.Email" Required="true" RequiredError="Email is required!" Validation="@(new EmailAddressAttribute() { ErrorMessage = "The email address is invalid" })"/>
                         <MudTextField Class="z-30" T="string" Label="Password" @bind-Value="_loginModel.Password" InputType="InputType.Password" Required="true" RequiredError="Password is required!"/>
-                        @if (_loginError)
-                        {
-                            <MudAlert Class="z-30" Severity="Severity.Error"> Login invalid</MudAlert>
-                        }
-
                         <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_loginSuccess)" Class="ml-auto z-30" OnClick="@ValidLogin">Login</MudButton>
                         <MudButton Variant="Variant.Text" OnClick="@LoginRegistrationSwitch">Register instead</MudButton>
                     </MudForm>
@@ -61,7 +56,7 @@
         {
             <!-- Registration start-->
             <MudItem xs="12" sm="7" Class="mx-auto z-20">
-                <MudPaper Class="pa-4" Style="background: floralwhite">
+                <MudPaper Class="pa-4" >
                     <MudForm @ref="_form" @bind-IsValid="@_registrationSuccess">
                         <MudText Typo="Typo.h4" Align="Align.Center">Registration</MudText>
                         <MudTextField T="string" Label="first Name" @bind-Value="_registrationModel.FirstName" Required="true" RequiredError="first name is required!"/>
@@ -75,16 +70,6 @@
                         <MudTextField T="string"
                                       Label="Password" HelperText="Repeat the password" InputType="InputType.Password"
                                       Validation="@(new Func<string, string>(PasswordMatch))"/>
-                        @if (_registerError)
-                        {
-                            <MudAlert Severity="Severity.Error"> Login invalid</MudAlert>
-                        }
-                        <!-- <div class="d-flex">
-                            <MudRadioGroup T="string" Required="true" RequiredError="Account type is required!">
-                                <MudRadio Option="@("Personal")">Personal</MudRadio>
-                                <MudRadio Option="@("Professional")">Professional</MudRadio>
-                            </MudRadioGroup>
-                        </div> -->
                         <div class="d-flex align-center justify-space-between">
                             <MudCheckBox T="bool" Required="true" RequiredError="You must agree" Label="I agree to the terms of use!"/>
                             <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!_registrationSuccess)" Class="ml-auto" OnClick="@ValidRegister">Register</MudButton>
@@ -132,6 +117,10 @@
         {
             _loginError = true;
         }
+        if (_loginError)
+        {
+            Snackbar.Add("Login failed.", Severity.Error);
+        }
     }
 
     private async void ValidRegister()
@@ -143,6 +132,10 @@
         else
         {
             _registerError = true;
+        }
+        if (_registerError)
+        {
+            Snackbar.Add("Registration failed.", Severity.Error);
         }
     }
     
