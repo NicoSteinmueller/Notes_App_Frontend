@@ -35,7 +35,7 @@
                {
                    if (MenuSettings.FavoritesOnly && note.Favorite || MenuSettings.FavoritesOnly == false)
                    {
-                       <SimpleNote Note="note"></SimpleNote> 
+                       <SimpleNote Note="note" NoteChanged="@NoteChanged"></SimpleNote> 
                    }
                }
                <MudItem>
@@ -82,10 +82,10 @@
         }
     }
 
-    protected override void OnInitialized()
+    protected async Task NoteChanged()
     {
-
-        
+        User.NotesShort = await NoteService.GetAllNotesShort();
+        StateHasChanged();
     }
 
     private async Task AddNote()

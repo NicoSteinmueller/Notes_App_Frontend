@@ -66,4 +66,16 @@ public class NoteService : INoteService
 
         return (new NoteShort(), false);
     }
+    
+    public async Task<bool> DeleteNote(string id)
+    {
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _user.Token);
+        var response = await _httpClient.DeleteAsync(adress + "/deleteNote?noteId=" + id);
+        if (response.IsSuccessStatusCode)
+        {
+            return true;
+        }
+
+        return false;
+    }
 }

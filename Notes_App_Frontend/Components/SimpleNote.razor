@@ -21,6 +21,8 @@
 </MudItem>
 
 @code {
+    [Parameter]
+    public EventCallback NoteChanged { get; set; }
 
     private async Task OnToggleButtonClicked()
     {
@@ -51,6 +53,8 @@
         var result = await dialog.Result;
         if (!result.Canceled)
         {
+            await NoteChanged.InvokeAsync();
+            StateHasChanged();
             bool haschanged = (bool)result.Data;
             if (haschanged)
             {

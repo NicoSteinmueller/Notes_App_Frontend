@@ -8,4 +8,5 @@ public interface INoteService
     Task<Note> GetNote(string id);
     Task<Note> SaveNote(Note note);
     Task<(NoteShort, bool)> SetNoteFavorite(NoteShort noteShort);
+    Task<bool> DeleteNote(string id);
 }
